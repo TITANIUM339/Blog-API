@@ -1,0 +1,45 @@
+{
+    "name": "blog-api",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "main": "./src/app.js",
+    "scripts": {
+        "checkFormat": "prettier . --check",
+        "format": "prettier . --write",
+        "lint": "eslint .",
+        "start": "node ./src/app.js",
+        "watch": "node --watch ./src/app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TITANIUM339/Blog-API.git"
+    },
+    "author": "TITANIUM339",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/TITANIUM339/Blog-API/issues"
+    },
+    "homepage": "https://github.com/TITANIUM339/Blog-API#readme",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "express-async-handler": "^1.2.0",
+        "express-validator": "^7.2.1",
+        "helmet": "^8.0.0",
+        "jsonwebtoken": "^9.0.2",
+        "passport": "^0.7.0",
+        "passport-jwt": "^4.0.1",
+        "passport-local": "^1.0.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.19.0",
+        "eslint": "^9.19.0",
+        "eslint-config-prettier": "^10.0.1",
+        "globals": "^15.14.0",
+        "prettier": "3.4.2",
+        "prisma": "^6.3.1"
+    }
+}
