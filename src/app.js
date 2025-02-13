@@ -2,6 +2,7 @@ import express from "express";
 import helmet from "helmet";
 import passport from "passport";
 import { jwtStrategy, localStrategy } from "./lib/passport.js";
+import routes from "./routes/index.js";
 
 const app = express();
 
@@ -11,6 +12,8 @@ app.use(express.json());
 
 passport.use(jwtStrategy);
 passport.use(localStrategy);
+
+app.use(routes);
 
 const PORT = process.env.PORT || 3300;
 
