@@ -57,3 +57,20 @@ export function validateSignup() {
         body("password").notEmpty().withMessage("password is required"),
     ];
 }
+
+export function validatePost() {
+    return [
+        body("title").trim().notEmpty().withMessage("title is required"),
+        body("content").trim().notEmpty().withMessage("content is required"),
+        body("thumbnail")
+            .trim()
+            .optional({ checkFalsy: true })
+            .isURL()
+            .withMessage("thumbnail must be a URL"),
+        body("published")
+            .optional()
+            .isBoolean()
+            .withMessage("published must be a boolean")
+            .toBoolean(),
+    ];
+}
