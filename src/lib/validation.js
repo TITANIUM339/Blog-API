@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import prisma from "../lib/prisma.js";
 
 function getOneTimeNext(next) {
@@ -69,6 +69,27 @@ export function validatePost() {
             .withMessage("thumbnail must be a URL"),
         body("published")
             .optional()
+            .isBoolean()
+            .withMessage("published must be a boolean")
+            .toBoolean(),
+    ];
+}
+
+export function validatePostsQuery() {
+    return [
+        query("myPosts")
+            .optional()
+            .isBoolean()
+            .withMessage("myPosts must be a boolean")
+            .toBoolean()
+            .custom((myPosts) => myPosts === true)
+            .withMessage("myPosts must be true")
+            .custom((_, { req }) => req.isAuthenticated())
+            .withMessage("myPosts must be undefined when not authenticated"),
+        query("published")
+            .optional()
+            .custom((_, { req }) => req.query.myPosts === true)
+            .withMessage("published must be undefined when myPosts is not true")
             .isBoolean()
             .withMessage("published must be a boolean")
             .toBoolean(),
