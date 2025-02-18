@@ -81,18 +81,14 @@ export function validatePostsQuery() {
             .optional()
             .isBoolean()
             .withMessage("myPosts must be a boolean")
-            .toBoolean()
-            .custom((myPosts) => myPosts === true)
-            .withMessage("myPosts must be true")
-            .custom((_, { req }) => req.isAuthenticated())
-            .withMessage("myPosts must be undefined when not authenticated"),
+            .toBoolean(),
         query("published")
             .optional()
-            .custom((_, { req }) => req.query.myPosts === true)
-            .withMessage("published must be undefined when myPosts is not true")
             .isBoolean()
             .withMessage("published must be a boolean")
-            .toBoolean(),
+            .toBoolean()
+            .custom((_, { req }) => req.query.myPosts === true)
+            .withMessage("myPosts must be true when published is provided"),
     ];
 }
 
