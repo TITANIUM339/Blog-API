@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, query, param } from "express-validator";
 import prisma from "../lib/prisma.js";
 
 function getOneTimeNext(next) {
@@ -94,4 +94,30 @@ export function validatePostsQuery() {
             .withMessage("published must be a boolean")
             .toBoolean(),
     ];
+}
+
+export function validatePostRoute() {
+    return (req, res, next) => {
+        const oneTimeNext = getOneTimeNext(next);
+
+        param("postId")
+            .isInt({ min: 1 })
+            .bail()
+            .toInt()
+            .custom(async (postId) => {
+                let post;
+
+                try {
+                    post = await prisma.post.findUnique({
+                        where: { id: postId },
+                    });
+                } catch (error) {
+                    oneTimeNext(error);
+
+                    return;
+                }
+
+                return post ? Promise.resolve() : Promise.reject();
+            })(req, res, oneTimeNext);
+    };
 }
