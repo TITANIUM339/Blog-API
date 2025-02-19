@@ -117,3 +117,28 @@ export function validatePostRoute() {
             })(req, res, oneTimeNext);
     };
 }
+
+export function validatePostUpdate() {
+    return [
+        body("title")
+            .trim()
+            .optional()
+            .notEmpty()
+            .withMessage("title is required"),
+        body("content")
+            .trim()
+            .optional()
+            .notEmpty()
+            .withMessage("content is required"),
+        body("thumbnail")
+            .trim()
+            .optional()
+            .isURL()
+            .withMessage("thumbnail must be a URL"),
+        body("published")
+            .optional()
+            .isBoolean()
+            .withMessage("published must be a boolean")
+            .toBoolean(),
+    ];
+}
