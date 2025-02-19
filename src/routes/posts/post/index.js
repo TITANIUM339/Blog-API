@@ -7,35 +7,59 @@ import expressAsyncHandler from "express-async-handler";
 import prisma from "../../../lib/prisma.js";
 import createHttpError from "http-errors";
 import { matchedData } from "express-validator";
+import passport from "passport";
 
 const router = Router();
 
-router.get(
-    "/:postId",
-    validatePostRoute(),
-    handleValidationFail,
-    optionalAuth,
-    expressAsyncHandler(async (req, res, next) => {
-        const { postId } = matchedData(req);
+const route = "/:postId";
 
-        const post = await prisma.post.findUnique({
-            where: { id: postId },
-            select: { published: true, authorId: true },
-        });
+router.use(route, validatePostRoute(), handleValidationFail);
 
-        if (!post.published && post.authorId !== req.user?.id) {
-            next(
-                req.isAuthenticated()
-                    ? createHttpError(403)
-                    : createHttpError(401),
-            );
+router
+    .route(route)
+    .get(
+        optionalAuth,
+        expressAsyncHandler(async (req, res, next) => {
+            const { postId } = matchedData(req);
 
-            return;
-        }
+            const post = await prisma.post.findUnique({
+                where: { id: postId },
+                select: { published: true, authorId: true },
+            });
 
-        next();
-    }),
-    post.get,
-);
+            if (!post.published && post.authorId !== req.user?.id) {
+                next(
+                    req.isAuthenticated()
+                        ? createHttpError(403)
+                        : createHttpError(401),
+                );
+
+                return;
+            }
+
+            next();
+        }),
+        post.get,
+    )
+    .put(
+        passport.authenticate("jwt", { session: false }),
+        expressAsyncHandler(async (req, res, next) => {
+            const { postId } = matchedData(req);
+
+            const post = await prisma.post.findUnique({
+                where: { id: postId },
+                select: { authorId: true },
+            });
+
+            if (post.authorId !== req.user.id) {
+                next(createHttpError(403));
+
+                return;
+            }
+
+            next();
+        }),
+        post.put,
+    );
 
 export default router;
