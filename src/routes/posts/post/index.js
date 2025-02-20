@@ -13,6 +13,23 @@ const router = Router();
 
 const route = "/:postId";
 
+const onlyAllowPostAuthor = expressAsyncHandler(async (req, res, next) => {
+    const { postId } = matchedData(req);
+
+    const post = await prisma.post.findUnique({
+        where: { id: postId },
+        select: { authorId: true },
+    });
+
+    if (post.authorId !== req.user.id) {
+        next(createHttpError(403));
+
+        return;
+    }
+
+    next();
+});
+
 router.use(route, validatePostRoute(), handleValidationFail);
 
 router
@@ -43,23 +60,13 @@ router
     )
     .put(
         passport.authenticate("jwt", { session: false }),
-        expressAsyncHandler(async (req, res, next) => {
-            const { postId } = matchedData(req);
-
-            const post = await prisma.post.findUnique({
-                where: { id: postId },
-                select: { authorId: true },
-            });
-
-            if (post.authorId !== req.user.id) {
-                next(createHttpError(403));
-
-                return;
-            }
-
-            next();
-        }),
+        onlyAllowPostAuthor,
         post.put,
+    )
+    .delete(
+        passport.authenticate("jwt", { session: false }),
+        onlyAllowPostAuthor,
+        post.delete,
     );
 
 export default router;
