@@ -30,4 +30,14 @@ export default {
             res.sendStatus(200);
         }),
     ],
+    delete: expressAsyncHandler(async (req, res) => {
+        const { postId } = matchedData(req);
+
+        await prisma.$transaction([
+            prisma.comment.deleteMany({ where: { postId } }),
+            prisma.post.delete({ where: { id: postId } }),
+        ]);
+
+        res.sendStatus(204);
+    }),
 };
