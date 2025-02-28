@@ -8,6 +8,8 @@ import prisma from "../../../lib/prisma.js";
 import createHttpError from "http-errors";
 import { matchedData } from "express-validator";
 import passport from "passport";
+import validatePostAccess from "../../../middleware/validatePostAccess.js";
+import comments from "./comments/index.js";
 
 const router = Router();
 
@@ -32,32 +34,11 @@ const onlyAllowPostAuthor = expressAsyncHandler(async (req, res, next) => {
 
 router.use(route, validatePostRoute(), handleValidationFail);
 
+router.use(route, comments);
+
 router
     .route(route)
-    .get(
-        optionalAuth,
-        expressAsyncHandler(async (req, res, next) => {
-            const { postId } = matchedData(req);
-
-            const post = await prisma.post.findUnique({
-                where: { id: postId },
-                select: { published: true, authorId: true },
-            });
-
-            if (!post.published && post.authorId !== req.user?.id) {
-                next(
-                    req.isAuthenticated()
-                        ? createHttpError(403)
-                        : createHttpError(401),
-                );
-
-                return;
-            }
-
-            next();
-        }),
-        post.get,
-    )
+    .get(optionalAuth, validatePostAccess, post.get)
     .put(
         passport.authenticate("jwt", { session: false }),
         onlyAllowPostAuthor,
