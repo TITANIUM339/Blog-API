@@ -142,3 +142,7 @@ export function validatePostUpdate() {
             .toBoolean(),
     ];
 }
+
+export function validateComment() {
+    return body("content").trim().notEmpty().withMessage("content is required");
+}
