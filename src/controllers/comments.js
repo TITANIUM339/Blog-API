@@ -24,4 +24,11 @@ export default {
             res.sendStatus(201);
         }),
     ],
+    get: expressAsyncHandler(async (req, res) => {
+        const { postId } = matchedData(req);
+
+        const comments = await prisma.comment.findMany({ where: { postId } });
+
+        res.json({ comments });
+    }),
 };
