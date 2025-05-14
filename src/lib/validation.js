@@ -146,3 +146,37 @@ export function validatePostUpdate() {
 export function validateComment() {
     return body("content").trim().notEmpty().withMessage("content is required");
 }
+
+export function validateCommentRoute() {
+    return (req, res, next) => {
+        const oneTimeNext = getOneTimeNext(next);
+
+        param("commentId")
+            .isInt({ min: 1 })
+            .bail()
+            .toInt()
+            .custom(async (commentId) => {
+                let comment;
+
+                try {
+                    comment = await prisma.comment.findUnique({
+                        where: { id: commentId },
+                    });
+                } catch (error) {
+                    oneTimeNext(error);
+
+                    return;
+                }
+
+                return comment ? Promise.resolve() : Promise.reject();
+            })(req, res, oneTimeNext);
+    };
+}
+
+export function validateCommentUpdate() {
+    return body("content")
+        .trim()
+        .optional()
+        .notEmpty()
+        .withMessage("content is required");
+}
