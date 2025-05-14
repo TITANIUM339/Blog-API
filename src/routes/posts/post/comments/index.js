@@ -3,10 +3,13 @@ import comments from "../../../../controllers/comments.js";
 import validatePostAccess from "../../../../middleware/validatePostAccess.js";
 import optionalAuth from "../../../../middleware/optionalAuth.js";
 import passport from "passport";
+import comment from "./comment/index.js";
 
 const router = Router();
 
 const route = "/comments";
+
+router.use(route, comment);
 
 router
     .route(route)
