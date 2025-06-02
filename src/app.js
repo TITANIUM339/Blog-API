@@ -4,12 +4,14 @@ import passport from "passport";
 import { jwtStrategy, localStrategy } from "./lib/passport.js";
 import routes from "./routes/index.js";
 import createHttpError from "http-errors";
+import cors from "cors";
 
 const app = express();
 
 app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors({ origin: process.env.CORS_ORIGIN_BLOG_ADMIN }));
 
 passport.use(jwtStrategy);
 passport.use(localStrategy);
