@@ -55,6 +55,11 @@ export function validateSignup() {
             .isAlpha()
             .withMessage("last name must be alphabetic"),
         body("password").notEmpty().withMessage("password is required"),
+        body("confirmPassword")
+            .notEmpty()
+            .withMessage("confirm password is required")
+            .custom((value, { req }) => value === req.body.password)
+            .withMessage("passwords don't match"),
     ];
 }
 
