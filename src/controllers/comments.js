@@ -27,7 +27,10 @@ export default {
     get: expressAsyncHandler(async (req, res) => {
         const { postId } = matchedData(req);
 
-        const comments = await prisma.comment.findMany({ where: { postId } });
+        const comments = await prisma.comment.findMany({
+            where: { postId },
+            orderBy: { createdAt: "desc" },
+        });
 
         res.json({ comments });
     }),

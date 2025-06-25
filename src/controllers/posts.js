@@ -19,6 +19,7 @@ export default {
             where: myPosts
                 ? { authorId: req.user.id, published }
                 : { published: true },
+            orderBy: { title: "asc" },
         });
 
         res.json({ posts });
