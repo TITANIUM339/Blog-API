@@ -137,7 +137,7 @@ export function validatePostUpdate() {
             .withMessage("content is required"),
         body("thumbnail")
             .trim()
-            .optional()
+            .optional({ checkFalsy: true })
             .isURL()
             .withMessage("thumbnail must be a URL"),
         body("published")
