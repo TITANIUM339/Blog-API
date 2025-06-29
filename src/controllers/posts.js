@@ -13,12 +13,18 @@ export default {
             return;
         }
 
-        const { myPosts, published } = matchedData(req);
+        const { myPosts, published, search } = matchedData(req);
 
         const posts = await prisma.post.findMany({
             where: myPosts
                 ? { authorId: req.user.id, published }
-                : { published: true },
+                : {
+                      published: true,
+                      title: { contains: search, mode: "insensitive" },
+                  },
+            include: {
+                author: { select: { firstName: true, lastName: true } },
+            },
             orderBy: { title: "asc" },
         });
 
