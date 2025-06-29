@@ -11,7 +11,14 @@ const app = express();
 app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors({ origin: process.env.CORS_ORIGIN_BLOG_ADMIN }));
+app.use(
+    cors({
+        origin: [
+            process.env.CORS_ORIGIN_BLOG_ADMIN,
+            process.env.CORS_ORIGIN_BLOG,
+        ],
+    }),
+);
 
 passport.use(jwtStrategy);
 passport.use(localStrategy);
