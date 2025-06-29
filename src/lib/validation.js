@@ -94,6 +94,7 @@ export function validatePostsQuery() {
             .toBoolean()
             .custom((_, { req }) => req.query.myPosts === true)
             .withMessage("myPosts must be true when published is provided"),
+        query("search").optional(),
     ];
 }
 
