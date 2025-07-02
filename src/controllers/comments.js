@@ -29,6 +29,9 @@ export default {
 
         const comments = await prisma.comment.findMany({
             where: { postId },
+            include: {
+                author: { select: { firstName: true, lastName: true } },
+            },
             orderBy: { createdAt: "desc" },
         });
 

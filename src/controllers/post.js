@@ -8,7 +8,12 @@ export default {
     get: expressAsyncHandler(async (req, res) => {
         const { postId } = matchedData(req);
 
-        const post = await prisma.post.findUnique({ where: { id: postId } });
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+            include: {
+                author: { select: { firstName: true, lastName: true } },
+            },
+        });
 
         res.json({ post });
     }),
